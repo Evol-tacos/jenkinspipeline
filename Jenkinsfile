@@ -8,7 +8,7 @@ pipeline {
     stages { 
         stage('Cloning our Git') { 
             steps { 
-                git ([url: 'https://github.com/Evol-tacos/jenkinspipeline.git', branch: 'main']) 
+                git ([url: 'https://github.com/Evol-tacos/jenkinspipeline.git', branch: 'main', credentialsId: 'Evol-tacos-github-user-token']) 
             }
         } 
         stage('Building our image') { 
