@@ -1,38 +1,41 @@
-pipeline { 
-    environment { 
-        imagename = "bryantamaro/pipelineprron" 
-        registryCredential = 'docker-hub' 
-        dockerImage = '' 
+pipeline {
+  environment {
+    imagename = "bryantamaro/pipelineprro"
+    registryCredential = 'docker-hub'
+    dockerImage = ''
+  }
+  agent any
+  stages {
+    stage('Cloning Git') {
+      steps {
+        git([url: 'https://github.com/Evol-tacos/jenkinspipeline.git', branch: 'main'])
+          
+      }
     }
-    agent any 
-    stages { 
-        stage('Cloning our Git') { 
-            steps { 
-                git([url: 'https://github.com/Evol-tacos/jenkinspipeline.git', branch: 'main', credentialsId: 'github-token']) 
-            }
-        } 
-        stage('Building our image') { 
-            steps { 
-                script { 
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
-                }
-            } 
+    stage('Building image') {
+      steps{
+        script {
+          dockerImage = docker.build imagename
         }
-        stage('Deploy our image') { 
-            steps { 
-                script { 
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push("$BUILD_NUMBER")
-                        dockerImage.push() 
-                    }
-                } 
-            }
-        } 
-        stage('Cleaning up') { 
-            steps { 
-                sh "docker rmi $imagename:$BUILD_NUMBER" 
-                  sh "docker rmi $imagename:latest"
-            }
-        } 
+      }
     }
+    stage('Deploy Image') {
+      steps{
+        script {
+          docker.withRegistry( '', registryCredential ) {
+            dockerImage.push("$BUILD_NUMBER")
+             dockerImage.push('latest')
+
+          }
+        }
+      }
+    }
+    stage('Remove Unused docker image') {
+      steps{
+        sh "docker rmi $imagename:$BUILD_NUMBER"
+         sh "docker rmi $imagename:latest"
+
+      }
+    }
+  }
 }
