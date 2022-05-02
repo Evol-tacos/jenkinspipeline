@@ -1,6 +1,6 @@
 pipeline { 
     environment { 
-        imagename = "bryantamaro/nodejsapp" 
+        imagename = "bryantamaro/pipelineprron" 
         registryCredential = 'docker-hub' 
         dockerImage = '' 
     }
